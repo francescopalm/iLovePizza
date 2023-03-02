@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegisteredAssociationController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Association;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,21 @@ Route::get('/welcome', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('newassociation', [RegisteredAssociationController::class, 'index'])->name('newassociation');
+Route::post('newassociation', [RegisteredAssociationController::class, 'store'])->name('newassociation.store');
+
+// Route Model Binding con custom key (usata la colonna "name" invece della default "id").
+// Permette di restituire la View, solo se vi è una corrispondenza con il parametro nella URL ("name") 
+// ed una associazione esistente nel DB
+Route::get('/association/{association:name}/{user_type?}', function(Association $association, int $user_type = null) {
+    $model = [
+        'name' => $association->name,
+        'user_type' => $user_type,
+    ];
+    return view('association', $model);
+})->name('association');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

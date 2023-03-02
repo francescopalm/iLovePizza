@@ -18,9 +18,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'type',
     ];
 
     /**
@@ -41,4 +43,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Relazione Molti-a-Molti che rappresenta le associazioni di cui fa parte l'utente
+     */
+    public function associations()   {
+        return $this->belongsToMany(Association::class)->withPivot('user_type');
+
+    }
 }
